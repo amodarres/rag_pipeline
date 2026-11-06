@@ -13,6 +13,6 @@ TOP_K = 4            # max chunks sent to Claude
 MIN_SCORE = 0.10     # relevance threshold (cosine similarity, 0 to 1)
 
 # --- GENERATE ----------------------------------------------------------------
-MODEL = "claude-opus-5-5"
+MODEL = "claude-sonnet-5-5"
 MAX_TOKENS = 16000   # upper limit on Claude's reply (thinking counts toward it too)
 EFFORT = "medium"    # how hard Claude thinks: "low" | "medium" | "high" | "xhigh" | "max"

@@ -191,7 +191,7 @@ answer, so you can see what Claude was given.
 | `CHUNK_OVERLAP` | `30` (words) | CHUNK | Words repeated between neighbouring chunks, so a sentence cut at a boundary still appears whole in one of them. Must satisfy `0 <= overlap < chunk_size`. |
 | `TOP_K` | `4` | RETRIEVE | Maximum number of chunks sent to Claude. More chunks improve recall but add noise and cost. |
 | `MIN_SCORE` | `0.10` | RETRIEVE | Relevance threshold (cosine similarity, 0 to 1). Chunks below it are dropped even if fewer than `TOP_K` remain. Raise it to get more "I don't know" answers and fewer hallucinations. |
-| `MODEL` | `"claude-opus-5-5"` | GENERATE | Which Claude model answers. |
+| `MODEL` | `"claude-sonnet-5-5"` | GENERATE | Which Claude model answers. |
 | `MAX_TOKENS` | `16000` | GENERATE | Upper limit on Claude's reply. Claude's thinking counts toward it, so a small value can cut an answer off. |
 | `EFFORT` | `"medium"` | GENERATE | How hard Claude thinks before answering (`low` to `max`). Lower is faster and cheaper. |
 
@@ -274,7 +274,7 @@ Each step is a separate commit, so you can review one stage at a time.
 
 The code follows this plan, with these differences:
 
-1. **Model, `MAX_TOKENS` and a new `EFFORT` knob.** `MODEL` is `claude-opus-5-5`, the current default Claude model. `MAX_TOKENS` is 16000 instead of 1024, because Claude's thinking counts toward the limit and 1024 risks cutting answers off. `EFFORT` controls how much Claude thinks; set it to `"low"` to save cost.
+1. **Model, `MAX_TOKENS` and a new `EFFORT` knob.** `MODEL` is `claude-sonnet-5-5`, as in the original plan (briefly `claude-opus-5-5` during implementation). `MAX_TOKENS` is 16000 instead of 1024, because Claude's thinking counts toward the limit and 1024 risks cutting answers off. `EFFORT` controls how much Claude thinks; set it to `"low"` to save cost.
 2. **Refusal fallback.** `generate()` calls `client.beta.messages.create(..., fallbacks="default")`. If Claude's safety classifiers decline a request, the API retries it on a fallback model in the same call. If the whole chain still refuses, `generate()` raises `RuntimeError`.
 3. **Headings are scored too.** `retrieve` indexes `heading + text` for each chunk, so a chunk under "Installation > Linux" matches "linux" even if its body doesn't say it.
 4. **`score_all(question, chunks)` added to `retrieve.py`.** It returns every chunk's score with no cutoffs. `retrieve()` is now `score_all()` filtered by `min_score` and cut to `top_k`. `python retrieve.py ...` prints all scores, which is what you need to tune `MIN_SCORE`.
