@@ -32,7 +32,7 @@ def _split_sections(text: str) -> list[tuple[str, str, int]]:
     sections: list[tuple[str, str, int]] = []
     heading_stack: list[tuple[int, str]] = []  # (level, title), e.g. [(1, "Guide"), (2, "Install")]
     body_lines: list[str] = []
-    body_start = 0
+    body_start = 0  # char offset in `text` where the current section's body begins (just after its heading line)
     in_code_fence = False  # a "# comment" inside ``` is code, not a heading
 
     def flush() -> None:
